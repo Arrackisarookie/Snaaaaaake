@@ -52,7 +52,7 @@ class SpeedLabel(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.content = 'speed: , position:'
-        self.font = pygame.font.Font('C:/Windows/Fonts/simhei.ttf', 20)
+        self.font = pygame.font.SysFont('arial', 20)
         self.image = self.font.render(self.content, True, (255, 0, 0), BLACK)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH-30, 10)
