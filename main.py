@@ -10,9 +10,11 @@ SCREEN_FPS = 30
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
 
-SNAKE_INIT_LENGTH = 10
-SNAKE_INIT_WIDTH = 10
+FOOD_WIDTH = 8
+SNAKE_INIT_LENGTH = 8
+SNAKE_INIT_WIDTH = 8
 SNAKE_SPEED = 2
 
 DIRECTIONS = {
@@ -20,12 +22,23 @@ DIRECTIONS = {
 }
 
 
+class Food(pygame.sprite.Sprite):
+
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((FOOD_WIDTH, FOOD_WIDTH))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, SCREEN_WIDTH)
+        self.rect.y = random.randint(20, SCREEN_HEIGHT)
+
+
 class Snake(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.first_x = random.randint(0, SCREEN_WIDTH)
-        self.first_y = random.randint(0, SCREEN_HEIGHT)
+        self.first_y = random.randint(20, SCREEN_HEIGHT)
         self.first_direction = random.choice(list(DIRECTIONS.keys()))
         self.speed = SNAKE_SPEED
 
@@ -91,8 +104,10 @@ def main():
     sprites = pygame.sprite.Group()
     snake = Snake()
     billboard = Billboard()
+    food = Food()
     sprites.add(snake)
     sprites.add(billboard)
+    sprites.add(food)
 
     while True:
         for event in pygame.event.get():
@@ -117,6 +132,11 @@ def main():
                 if event.key == pygame.K_r:
                     snake.reset()
                     print('Reset')
+
+        if pygame.sprite.collide_rect(snake, food):
+            sprites.remove(food)
+            food = Food()
+            sprites.add(food)
 
         # Update
         slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
