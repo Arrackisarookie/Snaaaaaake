@@ -29,6 +29,9 @@ class Food(pygame.sprite.Sprite):
         self.image = pygame.Surface((FOOD_WIDTH, FOOD_WIDTH))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
+        self.reborn()
+
+    def reborn(self):
         self.rect.x = random.randint(0, SCREEN_WIDTH)
         self.rect.y = random.randint(20, SCREEN_HEIGHT)
 
@@ -135,9 +138,7 @@ def main():
                     print('Reset')
 
         if pygame.sprite.collide_rect(snake, food):
-            sprites.remove(food)
-            food = Food()
-            sprites.add(food)
+            food.reborn()
 
         # Update
         slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
