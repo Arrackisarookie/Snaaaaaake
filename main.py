@@ -37,6 +37,7 @@ class Snake(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.direction = None
         self.first_x = random.randint(0, SCREEN_WIDTH)
         self.first_y = random.randint(20, SCREEN_HEIGHT)
         self.first_direction = random.choice(list(DIRECTIONS.keys()))
@@ -47,7 +48,7 @@ class Snake(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.reset()
 
-    def changeDirection(self, direction):
+    def change_direction(self, direction):
         if DIRECTIONS[self.direction] + DIRECTIONS[direction] != 0:
             self.direction = direction
 
@@ -117,16 +118,16 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    snake.changeDirection('UP')
+                    snake.change_direction('UP')
                     print('UP')
                 if event.key == pygame.K_s:
-                    snake.changeDirection('DOWN')
+                    snake.change_direction('DOWN')
                     print('DOWN')
                 if event.key == pygame.K_a:
-                    snake.changeDirection('LEFT')
+                    snake.change_direction('LEFT')
                     print('LEFT')
                 if event.key == pygame.K_d:
-                    snake.changeDirection('RIGHT')
+                    snake.change_direction('RIGHT')
                     print('RIGHT')
 
                 if event.key == pygame.K_r:
@@ -140,7 +141,8 @@ def main():
 
         # Update
         slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
-        billboard.rewrite(slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
+        billboard.rewrite(
+            slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
         sprites.update()
 
         # Draw / render
