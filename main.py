@@ -15,12 +15,9 @@ SNAKE_INIT_LENGTH = 10
 SNAKE_INIT_WIDTH = 10
 SNAKE_SPEED = 2
 
-UP = 1
-DOWN = -1
-LEFT = 2
-RIGHT = -2
-
-DIRECTIONS = [UP, DOWN, LEFT, RIGHT]
+DIRECTIONS = {
+    'UP': 1, 'DOWN': -1, 'LEFT': 2, 'RIGHT': -2
+}
 
 
 class Snake(pygame.sprite.Sprite):
@@ -29,7 +26,7 @@ class Snake(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.first_x = random.randint(0, SCREEN_WIDTH)
         self.first_y = random.randint(0, SCREEN_HEIGHT)
-        self.first_direction = random.choice(DIRECTIONS)
+        self.first_direction = random.choice(list(DIRECTIONS.keys()))
         self.speed = SNAKE_SPEED
 
         self.image = pygame.Surface((SNAKE_INIT_LENGTH, SNAKE_INIT_WIDTH))
@@ -38,17 +35,17 @@ class Snake(pygame.sprite.Sprite):
         self.reset()
 
     def changeDirection(self, direction):
-        if self.direction + direction != 0:
+        if DIRECTIONS[self.direction] + DIRECTIONS[direction] != 0:
             self.direction = direction
 
     def update(self):
-        if self.direction == UP:
+        if self.direction == 'UP':
             self.rect.y -= self.speed
-        elif self.direction == DOWN:
+        elif self.direction == 'DOWN':
             self.rect.y += self.speed
-        elif self.direction == LEFT:
+        elif self.direction == 'LEFT':
             self.rect.x -= self.speed
-        elif self.direction == RIGHT:
+        elif self.direction == 'RIGHT':
             self.rect.x += self.speed
 
         # 边界监测
@@ -72,7 +69,7 @@ class Billboard(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.content = ''
-        self.font = pygame.font.SysFont('arial', 20)
+        self.font = pygame.font.SysFont('consolas', 20)
         self.update()
 
     def rewrite(self, content):
@@ -104,16 +101,16 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                snake.changeDirection(UP)
+                snake.changeDirection('UP')
                 print('UP')
             if event.key == pygame.K_s:
-                snake.changeDirection(DOWN)
+                snake.changeDirection('DOWN')
                 print('DOWN')
             if event.key == pygame.K_a:
-                snake.changeDirection(LEFT)
+                snake.changeDirection('LEFT')
                 print('LEFT')
             if event.key == pygame.K_d:
-                snake.changeDirection(RIGHT)
+                snake.changeDirection('RIGHT')
                 print('RIGHT')
 
             if event.key == pygame.K_r:
@@ -121,8 +118,8 @@ while True:
                 print('Reset')
 
     # Update
-    slogan = 'Position: ({}, {}, {}, {})'
-    billboard.rewrite(slogan.format(snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
+    slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
+    billboard.rewrite(slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
     sprites.update()
 
     # Draw / render
