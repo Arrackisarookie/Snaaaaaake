@@ -80,51 +80,56 @@ class Billboard(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
-        
 
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption(CAPTION)
-clock = pygame.time.Clock()
 
-sprites = pygame.sprite.Group()
-snake = Snake()
-billboard = Billboard()
-sprites.add(snake)
-sprites.add(billboard)
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption(CAPTION)
+    clock = pygame.time.Clock()
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+    sprites = pygame.sprite.Group()
+    snake = Snake()
+    billboard = Billboard()
+    sprites.add(snake)
+    sprites.add(billboard)
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                snake.changeDirection('UP')
-                print('UP')
-            if event.key == pygame.K_s:
-                snake.changeDirection('DOWN')
-                print('DOWN')
-            if event.key == pygame.K_a:
-                snake.changeDirection('LEFT')
-                print('LEFT')
-            if event.key == pygame.K_d:
-                snake.changeDirection('RIGHT')
-                print('RIGHT')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
-            if event.key == pygame.K_r:
-                snake.reset()
-                print('Reset')
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    snake.changeDirection('UP')
+                    print('UP')
+                if event.key == pygame.K_s:
+                    snake.changeDirection('DOWN')
+                    print('DOWN')
+                if event.key == pygame.K_a:
+                    snake.changeDirection('LEFT')
+                    print('LEFT')
+                if event.key == pygame.K_d:
+                    snake.changeDirection('RIGHT')
+                    print('RIGHT')
 
-    # Update
-    slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
-    billboard.rewrite(slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
-    sprites.update()
+                if event.key == pygame.K_r:
+                    snake.reset()
+                    print('Reset')
 
-    # Draw / render
-    screen.fill(BLACK)
-    sprites.draw(screen)
+        # Update
+        slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
+        billboard.rewrite(slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
+        sprites.update()
 
-    pygame.display.flip()
-    clock.tick(SCREEN_FPS)
+        # Draw / render
+        screen.fill(BLACK)
+        sprites.draw(screen)
+
+        pygame.display.flip()
+        clock.tick(SCREEN_FPS)
+
+
+if __name__ == '__main__':
+    main()
