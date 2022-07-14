@@ -12,10 +12,10 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 
-FOOD_WIDTH = 8
-SNAKE_INIT_LENGTH = 8
-SNAKE_INIT_WIDTH = 8
-SNAKE_SPEED = 2
+FOOD_WIDTH = 15
+SNAKE_INIT_LENGTH = 15
+SNAKE_INIT_WIDTH = 15
+SNAKE_SPEED = 5
 
 DIRECTIONS = {
     'UP': 1, 'DOWN': -1, 'LEFT': 2, 'RIGHT': -2
@@ -45,11 +45,15 @@ class Snake(pygame.sprite.Sprite):
         self.first_y = random.randint(20, SCREEN_HEIGHT)
         self.first_direction = random.choice(list(DIRECTIONS.keys()))
         self.speed = SNAKE_SPEED
+        self.score = 0
 
         self.image = pygame.Surface((SNAKE_INIT_LENGTH, SNAKE_INIT_WIDTH))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.reset()
+
+    def hit(self):
+        self.score += 1
 
     def change_direction(self, direction):
         if DIRECTIONS[self.direction] + DIRECTIONS[direction] != 0:
@@ -83,20 +87,23 @@ class Snake(pygame.sprite.Sprite):
 
 
 class Billboard(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, template, left=0, top=0):
         pygame.sprite.Sprite.__init__(self)
+        self.template = template
+        self.left = left
+        self.top = top
         self.content = ''
         self.font = pygame.font.SysFont('consolas', 20)
         self.update()
 
-    def rewrite(self, content):
-        self.content = content
+    def rewrite(self, *args):
+        self.content = self.template.format(*args)
 
     def update(self):
         self.image = self.font.render(self.content, True, (255, 0, 0), BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
+        self.rect.x = self.left
+        self.rect.y = self.top
 
 
 def main():
@@ -107,10 +114,14 @@ def main():
 
     sprites = pygame.sprite.Group()
     snake = Snake()
-    billboard = Billboard()
+    direction_board = Billboard('Direction: {:5}', 0, 0)
+    position_board = Billboard('Position: ({:3}, {:3}, {:3}, {:3})', 0, 20)
+    score_board = Billboard('Score: {:3}', 0, 40)
     food = Food()
     sprites.add(snake)
-    sprites.add(billboard)
+    sprites.add(direction_board)
+    sprites.add(position_board)
+    sprites.add(score_board)
     sprites.add(food)
 
     while True:
@@ -138,12 +149,14 @@ def main():
                     print('Reset')
 
         if pygame.sprite.collide_rect(snake, food):
+            snake.hit()
             food.reborn()
 
         # Update
-        slogan = 'Direction: {:5}, Position: ({:3}, {:3}, {:3}, {:3})'
-        billboard.rewrite(
-            slogan.format(snake.direction, snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right))
+
+        score_board.rewrite(snake.score)
+        direction_board.rewrite(snake.direction)
+        position_board.rewrite(snake.rect.top, snake.rect.bottom, snake.rect.left, snake.rect.right)
         sprites.update()
 
         # Draw / render
