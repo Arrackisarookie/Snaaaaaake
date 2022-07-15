@@ -26,17 +26,34 @@ clock = pygame.time.Clock()
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = mob_img
-        self.image.set_colorkey(BLACK)
+        self.image_orig = mob_img
+        self.image_orig.set_colorkey(BLACK)
+
+        self.image = self.image_orig.copy()
         self.rect = self.image.get_rect()
-        self.radius = int(self.rect.width * 0.85 / 2)
+        self.radius = int(self.rect.width * 0.9 / 2)
         # pygame.draw.circle(self.image, RED, self.rect.center, self.radius)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100, -40)
         self.speed_y = random.randrange(1, 8)
         self.speed_x = random.randrange(-3, 3)
 
+        self.rot = 0
+        self.rot_speed = random.randrange(-8, 8)
+        self.last_rotate = pygame.time.get_ticks()
+
+    def rotate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_rotate > 50:
+            self.last_rotate = now
+            self.rot = (self.rot + self.rot_speed) % 360
+            self.image = pygame.transform.rotate(self.image_orig, self.rot)
+            old_center = self.rect.center
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
+
     def update(self):
+        self.rotate()
         self.rect.y += self.speed_y
         self.rect.x += self.speed_x
 
