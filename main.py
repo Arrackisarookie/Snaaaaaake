@@ -1,11 +1,13 @@
+import os.path
 import random
 
 import pygame
 
-CAPTION = 'Shump!'
+IMG_DIR = os.path.join(os.path.dirname(__file__), 'resources/images')
 
+CAPTION = 'Shump!'
 WIDTH = 480
-HEIGHT = 640
+HEIGHT = 600
 FPS = 60
 
 WHITE = (255, 255, 255)
@@ -15,12 +17,17 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption(CAPTION)
+clock = pygame.time.Clock()
+
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((30, 40))
-        self.image.fill(RED)
+        self.image = mob_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100, -40)
@@ -41,8 +48,7 @@ class Mob(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 20))
-        self.image.fill(YELLOW)
+        self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -57,8 +63,8 @@ class Bullet(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50, 40))
-        self.image.fill(GREEN)
+        self.image = pygame.transform.scale(player_img, (50, 38))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -86,10 +92,11 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = 0
 
 
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption(CAPTION)
-clock = pygame.time.Clock()
+background = pygame.image.load(os.path.join(IMG_DIR, 'starField.png')).convert()
+background_rect = background.get_rect()
+player_img = pygame.image.load(os.path.join(IMG_DIR, 'playerShip1_orange.png')).convert()
+mob_img = pygame.image.load(os.path.join(IMG_DIR, 'meteorBrown_med1.png')).convert()
+bullet_img = pygame.image.load(os.path.join(IMG_DIR, 'laserRed16.png')).convert()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
@@ -124,6 +131,7 @@ while running:
     if hits:
         running = False
     screen.fill(BLACK)
+    screen.blit(background, background_rect)
     all_sprites.draw(screen)
 
     pygame.display.flip()
