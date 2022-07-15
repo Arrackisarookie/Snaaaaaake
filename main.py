@@ -113,6 +113,17 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = 0
 
 
+font_name = pygame.font.match_font('arial')
+
+
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
+
 background = pygame.image.load(os.path.join(IMG_DIR, 'starField.png')).convert()
 background_rect = background.get_rect()
 player_img = pygame.image.load(os.path.join(IMG_DIR, 'playerShip1_orange.png')).convert()
@@ -131,6 +142,8 @@ for i in range(8):
     all_sprites.add(m)
     mobs.add(m)
 
+score = 0
+
 running = True
 while running:
     clock.tick(FPS)
@@ -142,11 +155,12 @@ while running:
                 player.shoot()
 
     all_sprites.update()
-    hits = pygame.sprite.groupcollide(bullets, mobs, True, True)
+    hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
+        score += 10 + hit.speed_y
 
     hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
     if hits:
@@ -154,6 +168,7 @@ while running:
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
+    draw_text(screen, str(score), 18, WIDTH / 2, 10)
 
     pygame.display.flip()
 
