@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 CAPTION = 'Shump!'
@@ -12,6 +14,28 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+
+
+class Mob(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((30, 40))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-100, -40)
+        self.speed_y = random.randrange(1, 8)
+        self.speed_x = random.randrange(-3, 3)
+
+    def update(self):
+        self.rect.y += self.speed_y
+        self.rect.x += self.speed_x
+
+        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 25:
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speed_y = random.randrange(1, 8)
+            self.speed_x = random.randrange(-3, 3)
 
 
 class Player(pygame.sprite.Sprite):
@@ -50,6 +74,12 @@ def main():
     all_sprites = pygame.sprite.Group()
     player = Player()
     all_sprites.add(player)
+
+    mobs = pygame.sprite.Group()
+    for i in range(8):
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
 
     running = True
     while running:
